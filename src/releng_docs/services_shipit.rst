@@ -120,9 +120,9 @@ In addition, releaserunner will tell shipit-v2 about the new release and ask shi
 
 .. code-block:: python
 
-    r = requests.post("https://mozilla-releng.net/shipit_pipeline", data={uid='foo', pipeline={}})
+    r = requests.post("https://pipeline.shipit.mozilla-releng.net", data={uid='foo', pipeline={}})
 
-shipit-v2's pipeline will consist of steps representing the release. A step could be sign off step (shipit_signoff), or a taskcluster step (shipit_taskcluster).
+shipit-v2's pipeline will consist of steps representing the release. Example steps are: sign off steps (shipit_signoff) and taskcluster steps (shipit_taskcluster).
 
 shipit-v2 will also create a step for the shipit-v1 generated taskcluster graph (graph1) so that it can add that graph to the shipit-v2 pipeline as a dependency. This means that a taskcluster step can be passed an existing taskcluster graphid to track
 rather than always creating a new one.
@@ -153,11 +153,13 @@ Release candidates would be implemented in a similar manner but since it contain
 ``shipit authentication and authorization``
 -------------------------------------------
 
-shipit-v2, at least on initial design, will adopt Taskcluster auth services for both authentication and authorization
+shipit (and services as a whole) will not rely on solely auth0 or current Taskcluster auth/scopes. Instead, shipit will use a combination of the two. Actual implementation design will be one of the following three options:
 
-This means that rather than re-inventing the wheel or tracking user permissions, shipit-v2 will rely on Taskcluster for its client_, roles_, and scopes model when interacting with any shipit_* api and ui.
+1. all services bar shipit_signoff will continue using tc auth/scopes as is implemented. shipit_signoff will use auth0 for reliable authentication and tc scopes/roles for policy mgmt (authorization)
+2. all services switch to auth0 for reliable authentication and tc scopes/roles for authorization
+3. add auth0 support into Taskcluster auth so that all of services, including shipit_signoff, can use only Taskcluster and get auth0 baked in for authentication.
 
-As part of a hardened security effort, shipit will then implement MFA either by extending the Taskcluster auth service or adding third party MFA integration.
+(1) and (2) are stopgaps. (3) hasn't been determined to be even feasible and amount of work is unknown due to Taskcluster/auth0 unfamiliarity.
 
 
 .. _client: https://tools.taskcluster.net/auth/clients/
