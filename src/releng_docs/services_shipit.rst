@@ -137,7 +137,37 @@ For example, here is an overview of what a Beta release comprises of in simplifi
 
 **Betas**
 
-.. image:: img/beta_overview.jpg
+.. blockdiag::
+   :align: center
+
+   diagram {
+     orientation = portrait;
+     default_fontsize = 16;
+
+
+     A [ label = "generate release\nartifacts"
+       , width = 180
+       , height = 60
+       ];
+     B [ label = "verify artifacts\nand updates on\ntest channel"
+       , width = 180
+       , height = 80
+       ];
+     C [ label = "push artifacts to\nrelease location"
+       , width = 180
+       , height = 60
+       ];
+     D [ label = "publish release\nhuman sign off"
+       , width = 180
+       , height = 60
+       ];
+     E [ label = "publish release"
+       , width = 180
+       ];
+
+     A -> B -> C -> D -> E;
+   }
+
 
 In the beta case, graph1 would finish with 'push artifacts to release location'. There would then be a shipit-v2 pipeline consisting of a sign off step: 'publish release human sign off', and a taskcluster step: 'publish release'
 
